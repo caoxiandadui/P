@@ -1,0 +1,184 @@
+﻿
+<link href="../../Content/layui/css/layui.css" rel="stylesheet" />
+<script src="../../js/Base.js"></script>
+<script src="../../Content/layui/layui.js"></script>
+<div class="current-location">
+    <span>当前位置：</span>
+    <span>系统设置</span><span class="separator">></span>
+    <span>菜单管理</span>
+</div>
+<div class="main">
+    <table id="tb" lay-filter="tb"></table>
+</div>
+<script type="text/html" id="tbar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" title="删除"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</script>
+
+<!--工具条 自定义模板-->
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon layui-icon-add-1"></i>添加</button>
+    </div>
+</script>
+
+<script type="text/javascript">
+    layui.config({
+        base: '/Content/layui/extends/'
+    })
+    layui.use(['element', 'treeTable', 'layer'], function () {
+        var $ = layui.$;
+        var layer = layui.layer;
+        var form = layui.form;
+        var treeTable = layui.treeTable;
+
+        form.render();
+        var h = $(window).height() - 180;
+
+        treeTable.render({
+            id: 'tb',
+            elem: '#tb',
+            toolbar: "#toolbar",
+            url: baseurl+'/api/ListMenu',
+            loading: true,
+            method: 'get',
+            tree: {
+                iconIndex: 1,
+                isPidData: true,
+                idName: 'menuID',
+                pidName: 'parentID',
+                arrowType: 'arrow2',
+                getIcon: 'ew-tree-icon-style2',
+                openName: 'MenuName'
+            },
+            cols: [[
+                { type: 'numbers', width: 50 },
+                {
+                    field: 'menuName', title: '菜单名称', templet: function (d) {
+                        return "&nbsp;<i class='" + d.Icon + "'></i>&nbsp;" + d.menuName;
+                    }
+                },
+                { field: 'Link', title: 'Url' },
+                {
+                    field: 'status', title: '状态', width: 100, templet: function (d) {
+                        return " <input type='checkbox' name='Status' value='" + d./*menu*/ID + "' lay-skin='switch' lay-text='启用|禁用' lay-filter='Status' " + (d.status == '1' ? 'checked' : '') + ">";
+                    }
+                },
+                {
+                    field: 'type', title: '菜单类型', width: 100, align: 'center', templet: function (d) {
+                        return d.Type == 0 ? "单页" : "iframe";
+                    }
+                },
+                { field: 'sort', title: '显示顺序', width: 100, align: 'center' },
+                { fixed: 'right', title: '操作', width: 180, align: 'center', toolbar: '#tbar' }
+            ]], page: true
+        });
+
+        var active = {
+            add: function () { //添加
+                com.get('/Menu/Edit', function (rtnStr) {
+                    layer.open({
+                        type: 1,
+                        title: '新增菜单',
+                        area: ['600px', '500px'],
+                        content: rtnStr,
+                        btn: ['保存', '关闭'],
+                        success: function (layero, index) {
+                            form.on('submit(btn-submit)', function (obj) {
+                                com.getAjax('/Menu/Edit', obj.field, function (data) {
+                                    if (data == '') {
+                                        layer.close(index);
+                                        treeGrid.reload('tb');
+                                        layer.msg(com.saveSuccess, { time: 1000 });
+                                    }
+                                    else {
+                                        layer.alert(data, { title: '系统提示', icon: 2 });
+                                    }
+                                })
+                            });
+                        },
+                        yes: function (index, layero) {
+                            layero.find('#btn-submit').click();
+                        }
+                    });
+                })
+            }
+        };
+        //监听工具条
+        treeTable.on('tool(tb)', function (obj) {
+            if (obj.event == 'del') { //删除
+                layer.confirm("您确定要删除吗?", { title: '系统提示', icon: 3 }, function (index) {
+                    com.getAjax('/Menu/Delete', { id: obj.data.MenuID }, function (data) {
+                        if (data == '') {
+                            treeGrid.reload('tb');
+                            layer.msg(com.delSuccess, { time: 1000 });
+                        }
+                        else {
+                            layer.alert(data, { title: '系统提示', icon: 2 });
+                        }
+                    })
+                });
+            } else if (obj.event == 'edit') {
+                com.get('/Menu/Edit/' + obj.data.MenuID, function (rtnStr) {
+                    layer.open({
+                        type: 1,
+                        title: '编辑菜单',
+                        area: ['600px', '500px'],
+                        content: rtnStr,
+                        btn: ['保存', '关闭'],
+                        success: function (layero, index) {
+                            form.on('submit(btn-submit)', function (obj) {
+                                com.getAjax('/Menu/Edit', obj.field, function (data) {
+                                    if (data == '') {
+                                        layer.close(index);
+                                        treeGrid.reload('tb');
+                                        layer.msg(com.saveSuccess, { time: 1000 });
+                                    }
+                                    else {
+                                        layer.alert(data, { title: '系统提示', icon: 2 });
+                                    }
+                                })
+                            });
+                        },
+                        yes: function (index, layero) {
+                            layero.find('#btn-submit').click();
+                        }
+                    });
+                })
+            }
+        });
+
+        //监听工具栏
+        treeTable.on('toolbar(tb)', function (obj) {
+            var type = obj.event
+            active[type] ? active[type].call(this) : '';
+        });
+
+        //监听排序
+        treeTable.on('sort(tb)', function (obj) {
+            table.reload('tb', {
+                where: {
+                    orderField: obj.field,  //排序字段
+                    orderBy: obj.type //排序方式
+                }
+            });
+        });
+
+        //监听状态操作
+        form.on('switch(Status)', function (obj) {
+            com.getAjax('/Menu/SetStatus', { id: this.value, status: this.checked ? 1 : 0 }, function (data) {
+                if (data == '') {
+                    layer.msg(com.saveSuccess, { time: 1000 });
+                }
+                else {
+                    layer.alert(data, { title: '系统提示', icon: 2 });
+                }
+            })
+        });
+
+        $('#btnList .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+</script>

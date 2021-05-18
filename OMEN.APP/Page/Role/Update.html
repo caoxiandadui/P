@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="../../Content/layui/css/layui.css" rel="stylesheet" />
+    <script src="../../Content/layui/layui.js"></script>
+    <script src="../../Content/BaseUrl.js"></script>
+    <script src="../../Scripts/jquery-3.6.0.js"></script>
+    <script src="../../js/Base.js"></script>
+</head>
+<body>
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色Id</label>
+            <div class="layui-input-block">
+                <input type="text" name="roleId" id="roleId" lay-verify="title" autocomplete="off" placeholder="请输入名称" readonly="readonly" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="roleName" id="roleName" lay-verify="title" autocomplete="off" placeholder="请输入名称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-block">
+                <input type="text" name="sort" id="sort" lay-verify="required" lay-reqtext="排序是必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-inline">
+                    <input type="tel" name="remark" id="remark" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit="" lay-filter="enmodify">确认修改</button>
+            </div>
+        </div>
+    </form>
+</body>
+</html>
+<script>
+    layui.use('form', function () {
+        var form = layui.form;
+        form.on('submit(enmodify)', function (data) {
+            $.ajax({
+                url: baseUrl + '/api/Update',
+                type: "post",
+                data: JSON.stringify({
+                    RoleName: $("#roleName").val(),
+                    Sort: $("#sort").val(),
+                    Remark: $("#remark").val(),
+                    RoleId: $("#roleId").val()
+                }),
+                contentType:"application/json; charset=utf-8",
+                success: function (data) {
+                    if (data == 0) {
+                        layer.msg('修改失败！', { icon: 5, offset: "auto", time: 2000 });//提示框
+                    } else {
+                        layer.msg('修改成功！', { icon: 6, offset: "auto", time: 2000 });//提示框
+                    }
+
+                    setTimeout(function () {
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);//关闭弹出层
+                        parent.location.reload();//重新加载父页面表格
+                    }, 2100);
+                }
+            })
+            return false;
+        });
+    });
+</script>

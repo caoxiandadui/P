@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>layer弹出百度地图</title>
+    <script src="jquery.min.js"></script>
+    <script src="layer/layer.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=wXwlMKdnY94vCvTCWLHzwqBI96I6kB1V"></script><!--百度地图key要自己注册,或者用1.4以下的版本(不需要key)-->
+</head>
+<body>
+    <div id="maplocation" style="width:500px;height:500px;display: none;"></div>
+    经度<input type="text" id="lng">
+    纬度<input type="text" id="lat">
+    <button id="dian">点击我</button>
+    <script>
+        $(document).ready(function(){
+            $("#dian").click(function(){
+                 layer.open({
+                     type:1,
+                     area:'500px',
+                     title:'测试',
+                     content:$('#maplocation'),
+                     success:function(){
+                         var map = new BMap.Map("maplocation"); // 创建地图实例
+
+                        map.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
+                        var point = new BMap.Point(116.404, 39.915); // 创建点坐标
+                        map.centerAndZoom(point, 12);
+
+                        function myFun(result){
+                            var cityName = result.name;
+                            map.setCenter(cityName);
+                            //alert("当前定位城市:"+cityName);
+                        }
+                        var myCity = new BMap.LocalCity();
+                        myCity.get(myFun);
+
+
+                        var marker = new BMap.Marker(map.getCenter());  // 创建标注
+                        map.addOverlay(marker);               // 将标注添加到地图中
+                        marker.enableDragging();                //可拖拽
+                        //marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+
+
+                        map.addEventListener("click",function(e){
+                             // alert(e.point.lng+","+e.point.lat);// 单击地图获取坐标点；
+                             //$('#lng').val(e.point.lng);
+                             //$('#lat').val(e.point.lat);
+                             //map.panTo(new BMap.Point(e.point.lng,e.point.lat));// map.panTo方法，把点击的点设置为地图中心点
+                        });
+
+                        marker.addEventListener("dragend", function(e){                    //拖拽标注获取标注坐标
+                             //alert("当前位置：" + e.point.lng + ", " + e.point.lat);           //可拖拽的标注
+                             $('#lng').val(e.point.lng);
+                            $('#lat').val(e.point.lat);
+                        })
+
+                        //加载完成之后,改变标注点坐标,使之和当前定位的城市基本相符
+                        map.addEventListener("tilesloaded",function(){
+                            var newpoint = map.getCenter();
+                            marker.setPosition(newpoint);
+                        });
+                     },
+                     cancel:function(){
+
+                     }
+                 });
+            });
+        });
+    </script>
+</body>
+</html>

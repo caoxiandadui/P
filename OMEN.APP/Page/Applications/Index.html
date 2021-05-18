@@ -1,0 +1,224 @@
+﻿
+<script src="../../Scripts/jquery-3.6.0.js"></script>
+<script src="../../js/jquery.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+<link href="../../layui-v2.6.2/layui/css/layui.css" rel="stylesheet" />
+<script src="../../layui-v2.6.2/layui/layui.js"></script>
+<script src="../../js/Base.js"></script>
+<div class="layui-btn-group demoTable">
+
+    <button class="layui-btn" data-type="add">
+        <i class="layui-icon layui-icon-date">  </i>
+        请假
+    </button>
+</div>
+
+输入查询：
+<input id="txtId" class="layui-input" type="text" placeholder="申请编号" />
+类型：
+<select id="s1" name="applicationTID" lay-filter="aihao">
+    <option value="0">请选择</option>
+</select>
+状态：
+<select id="s2" name="applicationTID" lay-filter="aihao">
+    <option value="-1">请选择状态</option>
+    <option value="0">待审核</option>
+    <option value="1">已通过</option>
+    <option value="2">未通过</option>
+</select>
+<div class="layui-btn-group demoTable">
+
+    <button class="layui-btn" data-type="search"><i class="layui-icon layui-icon-search"></i>查找</button>
+
+</div>
+
+
+<input id="h1" type="hidden" />
+<h2>我的申请</h2>
+<hr />
+<table class="layui-hide" id="test" lay-filter="test"></table>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detial">详情</a>
+
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+
+</script>
+
+<script>
+    userid = 0;
+
+
+
+    $(function () {
+        checkedloginname();
+        bind1();
+    })
+
+    function checkedloginname() {
+        $.ajax({
+            url: baseurl + "/api/GetUserID",
+            data: { "username": "admin" },
+            type: "get",
+            async: false,
+            success:
+                function (d) {
+                    $("#h1").val(d);
+                    userid = d;
+                }
+        })
+
+    }
+    function bind1() {
+        $.ajax({
+            url: baseurl + "/api/BindAppType",
+            dataType: "json",
+            type: "get",
+            success:
+                function (d) {
+                    $("#s1").empty().append('<option value="0">请选择申请类型</option>');
+                    $(d.data).each(function () {
+                        var str = ' <option value="' + this.applicationTID + '">' + this.applicationTName + '</option>';
+                        $("#s1").append(str);
+
+                        layui.use('form', function () {
+                            var form = layui.form;
+                            form.render();
+                        });
+                    })
+                }
+        })
+
+    }
+</script>
+
+<script>
+
+    layui.use(['tree', 'util', 'table'], function () {
+        var table = layui.table,
+            tree = layui.tree
+            , layer = layui.layer
+            , util = layui.util
+
+
+        table.render({
+            elem: '#test'
+            , async: false
+            , url: baseurl + '/api/ShowApplication'
+            , where: { userid: userid }
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                title: '提示'
+                , layEvent: 'LAYTABLE_TIPS'
+                , icon: 'layui-icon-tips'
+            }]
+            , headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('token')
+            }
+
+
+            , title: '我的申请'
+            , cols: [[
+                { field: 'applicationID', title: '编号', width: 80, fixed: 'left', unresize: true, sort: true }
+                , { field: 'applicationTName', title: '请假类型', width: 120, edit: 'text' }
+                , {
+                    field: 'beginTime', title: '开始时间', width: 120, edit: 'text'
+                }
+                , { field: 'endTime', title: '结束时间', width: 120 }
+                , { field: 'dayNum', title: '天数', width: 120 }
+                , {
+                    field: 'statu', title: '状态', width: 100, templet: function (res) {
+                        return '<em>' + (res.statu == 0 ? "待审核" : (res.statu == 1 ? "通过" : "未通过")) + '</em>'
+                    }
+                }
+                , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 450 }
+            ]]
+            , page: true
+        });
+
+        //监听行工具事件
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            if (obj.event == 'del') { //删除
+                layer.confirm("您确定要删除吗?", { title: '系统提示', icon: 3 }, function (index) {
+                    $.ajax({
+                        url: baseurl + "/api/DelApplication",
+                        contentType: "application/json",
+                        data: JSON.stringify(obj.data),
+                        headers: {
+                            Authorization: 'Bearer ' + localStorage.getItem('token')
+                        },
+                        type: "post",
+                        success:
+                            function (d) {
+                                if (d > 0) {
+                                    layer.alert("删除成功", {
+                                        title: '系统提示'
+                                    }, function () {
+                                        table.reload('test');
+                                    })
+
+                                }
+                                else {
+                                    layer.alert("删除失败");
+
+                                }
+                            }
+                    })
+                });
+            } else if (obj.event === 'detial') {
+                layer.open({
+                    type: 2,
+                    title: '申请详情',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['80%', '90%'],
+                    content: '/Applications/Edit?ApplicationID=' + obj.data.applicationID//iframe的url，
+                    , end: table.reload('test')
+                })
+            }
+
+
+        });
+
+        var $ = layui.$, active = {
+            add: function () { //添加
+                layer.open({
+                    type: 2,
+                    title: '申请',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['90%', '90%'],
+                    content: '/Applications/Insert' //iframe的url
+                    , end: table.reload('test')
+                })
+            }
+            , search:
+                function () {
+                    table.reload(
+                        'test', {
+                        url: baseurl + '/api/ShowApplication'
+                        , where: {
+                            applicationid: $("#txtId").val()
+                            , typeid: $("#s1").val()
+                            , state: $("#s2").val()
+
+                        }
+
+                    });
+
+                }
+        };
+
+        $('.demoTable .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+
+
+
+</script>
+
+
+

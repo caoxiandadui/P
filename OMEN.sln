@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMEN", "OMEN\OMEN.csproj", "{E7918BE5-AE02-42DF-B934-5DC725AF086E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMEN.Core.Common", "OMEN.Core.Common\OMEN.Core.Common.csproj", "{475121C0-E07F-4D10-8E7D-40C7066316F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMEN.Core.Model", "OMEN.Core.Model\OMEN.Core.Model.csproj", "{C20993DD-F6B1-4989-92E2-906E669C0DA3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMEN.Core.IRepository", "OMEN.Core.IRepository\OMEN.Core.IRepository.csproj", "{F01AE248-CDA6-4CDC-9C58-72BECD4E6A50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMEN.Core.Repository", "OMEN.Core.Repository\OMEN.Core.Repository.csproj", "{7B2C29AA-2C75-413D-9204-3FC109B18C18}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMEN.APP", "OMEN.APP\OMEN.APP.csproj", "{96742802-089F-493D-B1E8-B0E367850A21}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E7918BE5-AE02-42DF-B934-5DC725AF086E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7918BE5-AE02-42DF-B934-5DC725AF086E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7918BE5-AE02-42DF-B934-5DC725AF086E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7918BE5-AE02-42DF-B934-5DC725AF086E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{475121C0-E07F-4D10-8E7D-40C7066316F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{475121C0-E07F-4D10-8E7D-40C7066316F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{475121C0-E07F-4D10-8E7D-40C7066316F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{475121C0-E07F-4D10-8E7D-40C7066316F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C20993DD-F6B1-4989-92E2-906E669C0DA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C20993DD-F6B1-4989-92E2-906E669C0DA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C20993DD-F6B1-4989-92E2-906E669C0DA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C20993DD-F6B1-4989-92E2-906E669C0DA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F01AE248-CDA6-4CDC-9C58-72BECD4E6A50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F01AE248-CDA6-4CDC-9C58-72BECD4E6A50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F01AE248-CDA6-4CDC-9C58-72BECD4E6A50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F01AE248-CDA6-4CDC-9C58-72BECD4E6A50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B2C29AA-2C75-413D-9204-3FC109B18C18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B2C29AA-2C75-413D-9204-3FC109B18C18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B2C29AA-2C75-413D-9204-3FC109B18C18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B2C29AA-2C75-413D-9204-3FC109B18C18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96742802-089F-493D-B1E8-B0E367850A21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96742802-089F-493D-B1E8-B0E367850A21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96742802-089F-493D-B1E8-B0E367850A21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96742802-089F-493D-B1E8-B0E367850A21}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6AFEAEBB-DC80-41DC-94A7-427CE3145731}
+	EndGlobalSection
+EndGlobal
